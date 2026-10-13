@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "remotion render src/index.ts Title out/title.mp4"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,10 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "remotion": "^4.0.535"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
   }
 }
