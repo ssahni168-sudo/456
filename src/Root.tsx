@@ -1,6 +1,7 @@
 import {Composition} from 'remotion';
 import {Title} from './Title';
 import {Edit} from './Edit';
+import {Product, PRODUCT_FRAMES} from './Product';
 
 export const FPS = 30;
 export const DURATION_SECONDS = 5;
@@ -25,6 +26,7 @@ export const RemotionRoot: React.FC = () => {
 				width={1080}
 				height={1920}
 			/>
+			<Composition id="Product" component={Product} durationInFrames={PRODUCT_FRAMES} fps={FPS} width={1080} height={1920} />
 		</>
 	);
 };
