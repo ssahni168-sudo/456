@@ -1,0 +1,325 @@
+import {AbsoluteFill, Audio, interpolate, Sequence, spring, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+
+// Vision Parts Point - Diwali wish (Reels / Status / WhatsApp, 1080x1920, 30fps, 22s)
+export const DIWALI_DURATION = 660;
+
+const BLUE = '#0B3D91';
+const NAVY = '#071F4D';
+const WHITE = '#FFFFFF';
+const GOLD = '#F5B700';
+const SAFFRON = '#FF8C1A';
+const RED = '#D7261E';
+const FONT = "'Trebuchet MS', 'Segoe UI', Arial, sans-serif";
+
+const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
+
+const Line: React.FC<{
+	top: number;
+	delay?: number;
+	size?: number;
+	color?: string;
+	weight?: number;
+	children: React.ReactNode;
+}> = ({top, delay = 0, size = 64, color = WHITE, weight = 700, children}) => {
+	const frame = useCurrentFrame();
+	const {fps} = useVideoConfig();
+	const p = spring({frame: frame - delay, fps, config: {damping: 18, stiffness: 120}});
+	return (
+		<div
+			style={{
+				position: 'absolute',
+				top,
+				left: 90,
+				right: 90,
+				textAlign: 'center',
+				fontFamily: FONT,
+				fontSize: size,
+				fontWeight: weight,
+				color,
+				lineHeight: 1.25,
+				opacity: p,
+				transform: `translateY(${(1 - p) * 40}px)`,
+			}}
+		>
+			{children}
+		</div>
+	);
+};
+
+// A clay diya that lights up (glow + flicker). Position is the diya's centre.
+const Diya: React.FC<{x: number; y: number; scale?: number; body?: string; delay?: number}> = ({
+	x,
+	y,
+	scale = 1,
+	body = SAFFRON,
+	delay = 0,
+}) => {
+	const frame = useCurrentFrame();
+	const lit = interpolate(frame, [delay, delay + 20], [0, 1], clamp);
+	const flicker = 0.9 + 0.1 * Math.sin(frame * 0.5 + x);
+	const w = 120 * scale;
+	const h = 110 * scale;
+	return (
+		<div style={{position: 'absolute', left: x - w / 2, top: y - h / 2, width: w, height: h}}>
+			<div
+				style={{
+					position: 'absolute',
+					left: '50%',
+					top: '16%',
+					width: 170 * scale,
+					height: 170 * scale,
+					transform: 'translate(-50%, -50%)',
+					borderRadius: '50%',
+					background:
+						'radial-gradient(circle, rgba(255,214,90,0.95) 0%, rgba(255,140,26,0.4) 45%, rgba(255,140,26,0) 70%)',
+					opacity: lit * flicker,
+				}}
+			/>
+			<svg viewBox="0 0 120 110" width={w} height={h} style={{position: 'absolute', left: 0, top: 0}}>
+				<path d="M60 30 C52 18 56 8 60 0 C64 8 68 18 60 30 Z" fill={GOLD} opacity={lit * flicker} />
+				<path d="M6 48 H114 Q104 92 60 96 Q16 92 6 48 Z" fill={body} opacity={0.35 + 0.65 * lit} />
+			</svg>
+		</div>
+	);
+};
+
+const DiyaRow: React.FC<{y: number; xs: number[]; baseDelay?: number; step?: number; scale?: number}> = ({
+	y,
+	xs,
+	baseDelay = 0,
+	step = 8,
+	scale = 0.9,
+}) => (
+	<>
+		{xs.map((x, i) => (
+			<Diya
+				key={i}
+				x={x}
+				y={y}
+				scale={scale}
+				body={[SAFFRON, RED, GOLD][i % 3]}
+				delay={baseDelay + i * step}
+			/>
+		))}
+	</>
+);
+
+// Scene 4: each point arrives with its own diya
+const Point: React.FC<{top: number; delay: number; text: string}> = ({top, delay, text}) => {
+	const frame = useCurrentFrame();
+	const {fps} = useVideoConfig();
+	const p = spring({frame: frame - delay, fps, config: {damping: 18, stiffness: 120}});
+	return (
+		<div
+			style={{
+				position: 'absolute',
+				top,
+				left: 90,
+				right: 90,
+				display: 'flex',
+				alignItems: 'center',
+				gap: 30,
+				opacity: p,
+				transform: `translateX(${(1 - p) * -60}px)`,
+				fontFamily: FONT,
+				fontSize: 54,
+				fontWeight: 700,
+				color: BLUE,
+				lineHeight: 1.3,
+			}}
+		>
+			<div style={{position: 'relative', width: 110, height: 100, flexShrink: 0}}>
+				<Diya x={55} y={50} scale={0.9} delay={delay} />
+			</div>
+			<div>{text}</div>
+		</div>
+	);
+};
+
+// Scene 5: rangoli built ring by ring, dot by dot
+const RANGOLI_CX = 540;
+const RANGOLI_CY = 760;
+const RINGS = [
+	{r: 90, n: 8, color: BLUE},
+	{r: 170, n: 16, color: GOLD},
+	{r: 250, n: 24, color: BLUE},
+];
+
+const Rangoli: React.FC = () => {
+	const frame = useCurrentFrame();
+	const {fps} = useVideoConfig();
+	const centre = spring({frame, fps, config: {damping: 12, stiffness: 160}});
+	const dots = RINGS.flatMap((ring, ri) =>
+		Array.from({length: ring.n}, (_, i) => {
+			const a = (i / ring.n) * 2 * Math.PI - Math.PI / 2;
+			const p = spring({
+				frame: frame - (ri * 25 + i * 2),
+				fps,
+				config: {damping: 12, stiffness: 160},
+			});
+			return (
+				<div
+					key={`${ri}-${i}`}
+					style={{
+						position: 'absolute',
+						left: RANGOLI_CX + Math.cos(a) * ring.r - 14,
+						top: RANGOLI_CY + Math.sin(a) * ring.r - 14,
+						width: 28,
+						height: 28,
+						borderRadius: '50%',
+						background: ring.color,
+						opacity: p,
+						transform: `scale(${p})`,
+					}}
+				/>
+			);
+		})
+	);
+	return (
+		<>
+			<div
+				style={{
+					position: 'absolute',
+					left: RANGOLI_CX - 40,
+					top: RANGOLI_CY - 40,
+					width: 80,
+					height: 80,
+					borderRadius: '50%',
+					background: GOLD,
+					opacity: centre,
+					transform: `scale(${centre})`,
+				}}
+			/>
+			{dots}
+		</>
+	);
+};
+
+// Scene 3: logo card
+const LogoCard: React.FC = () => {
+	const frame = useCurrentFrame();
+	const {fps} = useVideoConfig();
+	const card = spring({frame, fps, config: {damping: 14, stiffness: 110}});
+	return (
+		<div
+			style={{
+				position: 'absolute',
+				top: 600,
+				left: 140,
+				right: 140,
+				height: 440,
+				background: BLUE,
+				border: `12px solid ${GOLD}`,
+				borderRadius: 40,
+				boxShadow: '0 30px 80px rgba(11, 61, 145, 0.35)',
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+				justifyContent: 'center',
+				fontFamily: FONT,
+				color: WHITE,
+				opacity: card,
+				transform: `scale(${0.8 + 0.2 * card})`,
+			}}
+		>
+			<div style={{fontSize: 96, fontWeight: 900, letterSpacing: 4}}>VISION</div>
+			<div style={{fontSize: 60, fontWeight: 700, letterSpacing: 8, color: GOLD}}>PARTS POINT</div>
+		</div>
+	);
+};
+
+const SceneA: React.FC = () => (
+	<AbsoluteFill>
+		<Diya x={540} y={900} scale={2.2} delay={10} />
+		<Line top={1180} delay={30} size={70}>
+			Every festival begins with one small light.
+		</Line>
+	</AbsoluteFill>
+);
+
+const SceneB: React.FC = () => (
+	<AbsoluteFill>
+		<Line top={560} size={78}>
+			This Diwali, we want to say thank you.
+		</Line>
+		<DiyaRow y={1200} xs={[130, 270, 410, 540, 670, 810, 950]} step={8} />
+	</AbsoluteFill>
+);
+
+const SceneC: React.FC = () => (
+	<AbsoluteFill>
+		<LogoCard />
+		<Line top={1120} delay={25} size={56} color={BLUE}>
+			From all of us at<br />
+			Vision Parts Point.
+		</Line>
+		<DiyaRow y={1420} xs={[130, 270, 410, 540, 670, 810, 950]} baseDelay={40} step={6} />
+	</AbsoluteFill>
+);
+
+const SceneD: React.FC = () => (
+	<AbsoluteFill>
+		<Point top={560} delay={0} text="Building with you, not just for you." />
+		<Point top={880} delay={35} text="Growing together, one year at a time." />
+		<Point top={1200} delay={70} text="Keeping our promises, every single day." />
+	</AbsoluteFill>
+);
+
+const SceneE: React.FC = () => (
+	<AbsoluteFill>
+		<Rangoli />
+		<Line top={1150} delay={50} size={54} color={BLUE}>
+			Thank you for trusting us. We are proud to have you with us.
+		</Line>
+	</AbsoluteFill>
+);
+
+const SceneF: React.FC = () => (
+	<AbsoluteFill>
+		<Line top={700} delay={0} size={72} weight={900} color={GOLD}>
+			VISION PARTS POINT
+		</Line>
+		<Line top={860} delay={12} size={60}>
+			Wishing you and your family a bright and joyful Diwali.
+		</Line>
+		<DiyaRow y={1200} xs={[240, 390, 540, 690, 840]} baseDelay={20} step={5} />
+	</AbsoluteFill>
+);
+
+export const Diwali: React.FC = () => {
+	const frame = useCurrentFrame();
+
+	// Navy -> white for the middle scenes, back to navy for the closing card, then fade to white.
+	const navyOpacity =
+		interpolate(frame, [210, 240], [1, 0], clamp) + interpolate(frame, [595, 615], [0, 1], clamp);
+	const whiteOut = interpolate(frame, [640, 660], [0, 1], clamp);
+
+	return (
+		<AbsoluteFill style={{background: WHITE}}>
+			<AbsoluteFill style={{background: `linear-gradient(180deg, ${NAVY}, ${BLUE})`, opacity: navyOpacity}} />
+
+			<Sequence from={0} durationInFrames={90}>
+				<SceneA />
+			</Sequence>
+			<Sequence from={90} durationInFrames={120}>
+				<SceneB />
+			</Sequence>
+			<Sequence from={210} durationInFrames={120}>
+				<SceneC />
+			</Sequence>
+			<Sequence from={330} durationInFrames={150}>
+				<SceneD />
+			</Sequence>
+			<Sequence from={480} durationInFrames={120}>
+				<SceneE />
+			</Sequence>
+			<Sequence from={600} durationInFrames={60}>
+				<SceneF />
+			</Sequence>
+
+			<Audio src={staticFile('diwali-audio.mp3')} />
+
+			<AbsoluteFill style={{background: WHITE, opacity: whiteOut}} />
+		</AbsoluteFill>
+	);
+};

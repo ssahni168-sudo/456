@@ -1,6 +1,7 @@
 import {Composition} from 'remotion';
 import {Title} from './Title';
 import {Edit} from './Edit';
+import {Diwali, DIWALI_DURATION} from './Diwali';
 
 export const FPS = 30;
 export const DURATION_SECONDS = 5;
@@ -21,6 +22,14 @@ export const RemotionRoot: React.FC = () => {
 				id="Edit"
 				component={Edit}
 				durationInFrames={579}
+				fps={FPS}
+				width={1080}
+				height={1920}
+			/>
+			<Composition
+				id="Diwali"
+				component={Diwali}
+				durationInFrames={DIWALI_DURATION}
 				fps={FPS}
 				width={1080}
 				height={1920}
