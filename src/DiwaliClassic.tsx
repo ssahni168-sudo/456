@@ -330,7 +330,10 @@ const SceneC: React.FC = () => (
 			From all of us at<br />
 			Vision Parts Point.
 		</Line>
-		<DiyaRow y={1420} xs={[130, 270, 410, 540, 670, 810, 950]} baseDelay={40} step={6} />
+		<Line top={1290} delay={45} size={40} color={BLUE} weight={700}>
+			Your one stop shop for remote controls, spare parts, accessories and repairing tools.
+		</Line>
+		<DiyaRow y={1520} xs={[130, 270, 410, 540, 670, 810, 950]} baseDelay={40} step={6} />
 	</AbsoluteFill>
 );
 
