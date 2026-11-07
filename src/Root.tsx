@@ -2,6 +2,7 @@ import {Composition} from 'remotion';
 import {Title} from './Title';
 import {Edit} from './Edit';
 import {Diwali, DIWALI_DURATION} from './Diwali';
+import {DiwaliClassic, DIWALI_DURATION as CLASSIC_DURATION} from './DiwaliClassic';
 
 export const FPS = 30;
 export const DURATION_SECONDS = 5;
@@ -33,6 +34,15 @@ export const RemotionRoot: React.FC = () => {
 				fps={FPS}
 				width={1080}
 				height={1920}
+			/>
+			<Composition
+				id="DiwaliClassic"
+				component={DiwaliClassic}
+				durationInFrames={CLASSIC_DURATION}
+				fps={FPS}
+				width={1080}
+				height={1920}
+				defaultProps={{fontSet: 'regal' as const}}
 			/>
 		</>
 	);
