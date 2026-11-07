@@ -2,7 +2,8 @@ import {createContext, useContext} from 'react';
 import {AbsoluteFill, Audio, continueRender, delayRender, interpolate, Sequence, spring, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 
 // Vision Parts Point - Diwali wish (Reels / Status / WhatsApp, 1080x1920, 30fps, 22s)
-export const DIWALI_DURATION = 780;
+// Full song length (38.6s at 30fps). The last screen holds until the song ends.
+export const DIWALI_DURATION = 1158;
 
 const BLUE = '#0B3D91';
 const NAVY = '#071F4D';
@@ -482,7 +483,6 @@ const DiwaliScene: React.FC<{personal?: boolean}> = ({personal = false}) => {
 	// Navy -> white for the middle scenes, back to navy for the closing card, then fade to white.
 	const navyOpacity =
 		interpolate(frame, [210, 240], [1, 0], clamp) + interpolate(frame, [596, 606], [0, 1], clamp);
-	const whiteOut = interpolate(frame, [760, 780], [0, 1], clamp);
 
 	return (
 		<AbsoluteFill style={{background: WHITE}}>
@@ -506,13 +506,12 @@ const DiwaliScene: React.FC<{personal?: boolean}> = ({personal = false}) => {
 			<Sequence from={600} durationInFrames={60}>
 				{personal ? <PSceneF /> : <SceneF />}
 			</Sequence>
-			<Sequence from={660} durationInFrames={120}>
+			<Sequence from={660} durationInFrames={DIWALI_DURATION - 660}>
 				{personal ? <PSceneG /> : <SceneG />}
 			</Sequence>
 
 			<Audio src={staticFile('diwali-audio.mp3')} />
 
-			<AbsoluteFill style={{background: WHITE, opacity: whiteOut}} />
 		</AbsoluteFill>
 	);
 };
