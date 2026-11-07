@@ -330,10 +330,7 @@ const SceneC: React.FC = () => (
 			From all of us at<br />
 			Vision Parts Point.
 		</Line>
-		<Line top={1268} delay={45} size={44} color={BLUE} weight={700}>
-			Your one stop shop for remote controls, spare parts, accessories and repairing tools.
-		</Line>
-		<DiyaRow y={1590} xs={[130, 270, 410, 540, 670, 810, 950]} baseDelay={40} step={6} />
+		<DiyaRow y={1420} xs={[130, 270, 410, 540, 670, 810, 950]} baseDelay={40} step={6} />
 	</AbsoluteFill>
 );
 
@@ -349,7 +346,7 @@ const SceneE: React.FC = () => (
 	<AbsoluteFill>
 		<Rangoli />
 		<Line top={1150} delay={50} size={54} color={BLUE}>
-			Thank you for trusting us. We are proud to have you with us.
+			Thank you for letting us be a part of your home.
 		</Line>
 	</AbsoluteFill>
 );
@@ -372,22 +369,28 @@ const SceneF: React.FC = () => (
 // Contact card: address and phone numbers, with a clear call to action.
 const SceneG: React.FC = () => (
 	<AbsoluteFill>
-		<Line top={470} delay={0} size={64} color={GOLD} weight={700}>
-			Visit us or call today
+		<Line top={440} delay={0} size={64} color={GOLD} weight={700}>
+			Always here for you
 		</Line>
-		<Line top={600} delay={12} size={60} family="brand" weight={900}>
+		<Line top={570} delay={12} size={60} family="brand" weight={900}>
 			VISION PARTS POINT
 		</Line>
-		<Line top={740} delay={24} size={50}>
-			218 Shopping Centre, Kota
+		<Line top={700} delay={24} size={40}>
+			Come say hello at 218 Shopping Centre, Kota
 		</Line>
-		<Line top={880} delay={36} size={60} color={GOLD} weight={700}>
+		<Line top={840} delay={36} size={40}>
+			Call us anytime
+		</Line>
+		<Line top={910} delay={40} size={56} color={GOLD} weight={700}>
 			9982096292
 		</Line>
-		<Line top={990} delay={44} size={60} color={GOLD} weight={700}>
+		<Line top={1000} delay={44} size={56} color={GOLD} weight={700}>
 			9468587570
 		</Line>
-		<DiyaRow y={1300} xs={[240, 390, 540, 690, 840]} baseDelay={56} step={5} />
+		<Line top={1170} delay={56} size={38}>
+			Remote controls, spare parts and repairs, with care.
+		</Line>
+		<DiyaRow y={1490} xs={[240, 390, 540, 690, 840]} baseDelay={60} step={5} />
 	</AbsoluteFill>
 );
 
