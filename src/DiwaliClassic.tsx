@@ -2,7 +2,7 @@ import {createContext, useContext} from 'react';
 import {AbsoluteFill, Audio, continueRender, delayRender, interpolate, Sequence, spring, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 
 // Vision Parts Point - Diwali wish (Reels / Status / WhatsApp, 1080x1920, 30fps, 22s)
-export const DIWALI_DURATION = 660;
+export const DIWALI_DURATION = 780;
 
 const BLUE = '#0B3D91';
 const NAVY = '#071F4D';
@@ -304,7 +304,7 @@ const Slam: React.FC<{top: number; size: number; delay?: number; color?: string;
 
 const SceneA: React.FC = () => (
 	<AbsoluteFill>
-		<Diya x={540} y={900} scale={2.2} delay={10} />
+		<Diya x={540} y={980} scale={2.2} delay={10} />
 		<Slam top={520} size={190} delay={0}>
 			Diwali.
 		</Slam>
@@ -330,10 +330,10 @@ const SceneC: React.FC = () => (
 			From all of us at<br />
 			Vision Parts Point.
 		</Line>
-		<Line top={1290} delay={45} size={40} color={BLUE} weight={700}>
+		<Line top={1268} delay={45} size={44} color={BLUE} weight={700}>
 			Your one stop shop for remote controls, spare parts, accessories and repairing tools.
 		</Line>
-		<DiyaRow y={1520} xs={[130, 270, 410, 540, 670, 810, 950]} baseDelay={40} step={6} />
+		<DiyaRow y={1590} xs={[130, 270, 410, 540, 670, 810, 950]} baseDelay={40} step={6} />
 	</AbsoluteFill>
 );
 
@@ -369,13 +369,35 @@ const SceneF: React.FC = () => (
 	</AbsoluteFill>
 );
 
+// Contact card: address and phone numbers, with a clear call to action.
+const SceneG: React.FC = () => (
+	<AbsoluteFill>
+		<Line top={470} delay={0} size={64} color={GOLD} weight={700}>
+			Visit us or call today
+		</Line>
+		<Line top={600} delay={12} size={60} family="brand" weight={900}>
+			VISION PARTS POINT
+		</Line>
+		<Line top={740} delay={24} size={50}>
+			218 Shopping Centre, Kota
+		</Line>
+		<Line top={880} delay={36} size={60} color={GOLD} weight={700}>
+			9982096292
+		</Line>
+		<Line top={990} delay={44} size={60} color={GOLD} weight={700}>
+			9468587570
+		</Line>
+		<DiyaRow y={1300} xs={[240, 390, 540, 690, 840]} baseDelay={56} step={5} />
+	</AbsoluteFill>
+);
+
 const DiwaliScene: React.FC = () => {
 	const frame = useCurrentFrame();
 
 	// Navy -> white for the middle scenes, back to navy for the closing card, then fade to white.
 	const navyOpacity =
-		interpolate(frame, [210, 240], [1, 0], clamp) + interpolate(frame, [595, 615], [0, 1], clamp);
-	const whiteOut = interpolate(frame, [640, 660], [0, 1], clamp);
+		interpolate(frame, [210, 240], [1, 0], clamp) + interpolate(frame, [596, 606], [0, 1], clamp);
+	const whiteOut = interpolate(frame, [760, 780], [0, 1], clamp);
 
 	return (
 		<AbsoluteFill style={{background: WHITE}}>
@@ -398,6 +420,9 @@ const DiwaliScene: React.FC = () => {
 			</Sequence>
 			<Sequence from={600} durationInFrames={60}>
 				<SceneF />
+			</Sequence>
+			<Sequence from={660} durationInFrames={120}>
+				<SceneG />
 			</Sequence>
 
 			<Audio src={staticFile('diwali-audio.mp3')} />
