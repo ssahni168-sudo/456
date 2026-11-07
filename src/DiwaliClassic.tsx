@@ -394,7 +394,89 @@ const SceneG: React.FC = () => (
 	</AbsoluteFill>
 );
 
-const DiwaliScene: React.FC = () => {
+// ---------- Personal version: no company name, no contact details ----------
+const PSceneC: React.FC = () => {
+	const font = useFont();
+	return (
+		<AbsoluteFill>
+			<div
+				style={{
+					position: 'absolute',
+					top: 600,
+					left: 140,
+					right: 140,
+					height: 440,
+					background: BLUE,
+					border: `12px solid ${GOLD}`,
+					borderRadius: 40,
+					boxShadow: '0 30px 80px rgba(11, 61, 145, 0.35)',
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					justifyContent: 'center',
+					fontFamily: font.display,
+					fontSize: 84,
+					color: WHITE,
+					lineHeight: 1.2,
+					textAlign: 'center',
+				}}
+			>
+				<div>May your home</div>
+				<div>always be full of light</div>
+			</div>
+			<Line top={1120} delay={25} size={56} color={BLUE}>
+				With love and gratitude.
+			</Line>
+			<DiyaRow y={1420} xs={[130, 270, 410, 540, 670, 810, 950]} baseDelay={40} step={6} />
+		</AbsoluteFill>
+	);
+};
+
+const PSceneD: React.FC = () => (
+	<AbsoluteFill>
+		<Point top={560} delay={0} text="Wishing you good health and happiness." />
+		<Point top={880} delay={35} text="May every day bring a little more joy." />
+		<Point top={1200} delay={70} text="Togetherness is the brightest light." />
+	</AbsoluteFill>
+);
+
+const PSceneE: React.FC = () => (
+	<AbsoluteFill>
+		<Rangoli />
+		<Line top={1150} delay={50} size={54} color={BLUE}>
+			Thank you for being there, every single day.
+		</Line>
+	</AbsoluteFill>
+);
+
+const PSceneF: React.FC = () => (
+	<AbsoluteFill>
+		<Slam top={470} size={150} delay={0} color={WHITE}>
+			Happy Diwali!
+		</Slam>
+		<Line top={760} delay={12} size={72} weight={900} color={GOLD} family="brand">
+			With love,
+		</Line>
+		<Line top={920} delay={20} size={60}>
+			Wishing you and your family a bright and joyful Diwali.
+		</Line>
+		<DiyaRow y={1200} xs={[240, 390, 540, 690, 840]} baseDelay={20} step={5} />
+	</AbsoluteFill>
+);
+
+const PSceneG: React.FC = () => (
+	<AbsoluteFill>
+		<Line top={600} delay={0} size={70} weight={700}>
+			Stay bright, stay blessed.
+		</Line>
+		<Line top={780} delay={18} size={56} color={GOLD} weight={700}>
+			Love, always.
+		</Line>
+		<DiyaRow y={1200} xs={[240, 390, 540, 690, 840]} baseDelay={30} step={5} />
+	</AbsoluteFill>
+);
+
+const DiwaliScene: React.FC<{personal?: boolean}> = ({personal = false}) => {
 	const frame = useCurrentFrame();
 
 	// Navy -> white for the middle scenes, back to navy for the closing card, then fade to white.
@@ -413,19 +495,19 @@ const DiwaliScene: React.FC = () => {
 				<SceneB />
 			</Sequence>
 			<Sequence from={210} durationInFrames={120}>
-				<SceneC />
+				{personal ? <PSceneC /> : <SceneC />}
 			</Sequence>
 			<Sequence from={330} durationInFrames={150}>
-				<SceneD />
+				{personal ? <PSceneD /> : <SceneD />}
 			</Sequence>
 			<Sequence from={480} durationInFrames={120}>
-				<SceneE />
+				{personal ? <PSceneE /> : <SceneE />}
 			</Sequence>
 			<Sequence from={600} durationInFrames={60}>
-				<SceneF />
+				{personal ? <PSceneF /> : <SceneF />}
 			</Sequence>
 			<Sequence from={660} durationInFrames={120}>
-				<SceneG />
+				{personal ? <PSceneG /> : <SceneG />}
 			</Sequence>
 
 			<Audio src={staticFile('diwali-audio.mp3')} />
@@ -435,8 +517,8 @@ const DiwaliScene: React.FC = () => {
 	);
 };
 
-export const DiwaliClassic: React.FC<{fontSet?: FontKey}> = ({fontSet = 'regal'}) => (
+export const DiwaliClassic: React.FC<{fontSet?: FontKey; personal?: boolean}> = ({fontSet = 'regal', personal = false}) => (
 	<FontCtx.Provider value={FONT_SETS[fontSet]}>
-		<DiwaliScene />
+		<DiwaliScene personal={personal} />
 	</FontCtx.Provider>
 );

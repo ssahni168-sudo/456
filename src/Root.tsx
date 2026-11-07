@@ -44,6 +44,15 @@ export const RemotionRoot: React.FC = () => {
 				height={1920}
 				defaultProps={{fontSet: 'regal' as const}}
 			/>
+			<Composition
+				id="DiwaliPersonal"
+				component={DiwaliClassic}
+				durationInFrames={CLASSIC_DURATION}
+				fps={FPS}
+				width={1080}
+				height={1920}
+				defaultProps={{fontSet: 'regal' as const, personal: true}}
+			/>
 		</>
 	);
 };
