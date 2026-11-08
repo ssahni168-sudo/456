@@ -391,8 +391,12 @@ const SceneG: React.FC = () => (
 		<Line top={1000} delay={44} size={56} color={GOLD} weight={700}>
 			9468587570
 		</Line>
-		<Line top={1170} delay={56} size={38}>
-			Remote controls, spare parts and repairs, with care.
+		<Line top={1150} delay={56} size={44} color={GOLD} weight={700}>
+			Remotes · LED Parts<br />
+			Backlights · Motherboards
+		</Line>
+		<Line top={1290} delay={64} size={36}>
+			Spare parts and repairs, with care.
 		</Line>
 		<DiyaRow y={1490} xs={[240, 390, 540, 690, 840]} baseDelay={60} step={5} />
 	</AbsoluteFill>
