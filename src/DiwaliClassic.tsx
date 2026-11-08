@@ -481,12 +481,47 @@ const PSceneF: React.FC = () => (
 	</AbsoluteFill>
 );
 
-// Closing: words settle, the diyas go out one by one, and one diya stays lit.
+// Closing: words settle, a few fireworks burst, and the light slowly dims to full dark.
+const FIREWORK_BURSTS = [
+	{start: 40, x: 300, y: 520, color: GOLD},
+	{start: 110, x: 770, y: 420, color: SAFFRON},
+	{start: 190, x: 540, y: 300, color: WHITE},
+	{start: 260, x: 230, y: 640, color: '#FFD27A'},
+	{start: 330, x: 820, y: 600, color: GOLD},
+	{start: 400, x: 430, y: 380, color: SAFFRON},
+];
+
+const FireBurst: React.FC<{start: number; x: number; y: number; color: string; seed: number}> = ({
+	start,
+	x,
+	y,
+	color,
+	seed,
+}) => {
+	const frame = useCurrentFrame();
+	const t = frame - start;
+	if (t < 0 || t > 90) {
+		return null;
+	}
+	const k = 1 - Math.pow(1 - Math.min(t, 80) / 80, 2); // ease-out spread
+	const opacity = Math.max(0, 1 - t / 80);
+	return (
+		<>
+			{Array.from({length: 26}, (_, i) => {
+				const a = (i / 26) * Math.PI * 2 + seed;
+				const dist = (150 + ((i * 53 + seed * 97) % 90)) * k;
+				const px = x + Math.cos(a) * dist;
+				const py = y + Math.sin(a) * dist + 0.012 * t * t; // slight gravity
+				return <circle key={i} cx={px} cy={py} r={7} fill={color} opacity={opacity} />;
+			})}
+		</>
+	);
+};
+
 const PSceneG: React.FC = () => {
 	const frame = useCurrentFrame();
 	const zoom = 1 + frame * 0.00012;
-	const fade = interpolate(frame, [468, 498], [0, 1], clamp);
-	const outOrder = [0, 1, 2, 4, 5, 6];
+	const dim = interpolate(frame, [150, 498], [0, 1], clamp);
 	return (
 		<AbsoluteFill>
 			<AbsoluteFill style={{transform: `scale(${zoom})`, transformOrigin: '50% 50%'}}>
@@ -497,17 +532,15 @@ const PSceneG: React.FC = () => {
 					Love, always.
 				</Line>
 				{[130, 270, 410, 540, 670, 810, 950].map((x, i) => (
-					<Diya
-						key={i}
-						x={x}
-						y={1200}
-						body={[SAFFRON, RED, GOLD][i % 3]}
-						delay={30 + i * 6}
-						offAt={i === 3 ? undefined : 330 + outOrder.indexOf(i) * 45}
-					/>
+					<Diya key={i} x={x} y={1200} body={[SAFFRON, RED, GOLD][i % 3]} delay={30 + i * 6} />
 				))}
 			</AbsoluteFill>
-			<AbsoluteFill style={{background: '#000000', opacity: fade}} />
+			<AbsoluteFill style={{background: '#000000', opacity: dim}} />
+			<svg width={1080} height={1920} viewBox="0 0 1080 1920" style={{position: 'absolute', left: 0, top: 0}}>
+				{FIREWORK_BURSTS.map((b, i) => (
+					<FireBurst key={i} start={b.start} x={b.x} y={b.y} color={b.color} seed={i + 1} />
+				))}
+			</svg>
 		</AbsoluteFill>
 	);
 };
