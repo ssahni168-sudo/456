@@ -371,6 +371,74 @@ const SceneF: React.FC = () => (
 );
 
 // Contact card: address and phone numbers, with a clear call to action.
+// Product drawings (line icons in gold): remote, LED strip, backlight, motherboard.
+type IconKind = 'remote' | 'led' | 'backlight' | 'board';
+const ProductIcon: React.FC<{kind: IconKind; x: number; delay: number}> = ({kind, x, delay}) => {
+	const frame = useCurrentFrame();
+	const {fps} = useVideoConfig();
+	const p = spring({frame: frame - delay, fps, config: {damping: 14, stiffness: 120}});
+	let art: React.ReactNode;
+	if (kind === 'remote') {
+		art = (
+			<>
+				<rect x={50} y={18} width={60} height={124} rx={16} />
+				<circle cx={80} cy={36} r={5} />
+				{[0, 1, 2].flatMap((r) =>
+					[0, 1, 2].map((c) => <circle key={`${r}-${c}`} cx={62 + c * 18} cy={62 + r * 18} r={5} />),
+				)}
+				<circle cx={80} cy={124} r={10} />
+			</>
+		);
+	} else if (kind === 'led') {
+		art = (
+			<>
+				<rect x={14} y={62} width={132} height={36} rx={18} />
+				{[0, 1, 2, 3, 4, 5].map((i) => (
+					<circle key={i} cx={34 + i * 18} cy={80} r={5} fill={GOLD} />
+				))}
+				<path d="M50 112 L36 146 M80 112 L80 150 M110 112 L124 146" />
+			</>
+		);
+	} else if (kind === 'backlight') {
+		art = (
+			<>
+				<rect x={30} y={20} width={100} height={72} rx={6} />
+				{[0, 1, 2, 3, 4].map((i) => (
+					<path key={i} d={`M${36 + i * 22} 104 L${26 + i * 22} 142`} />
+				))}
+			</>
+		);
+	} else {
+		art = (
+			<>
+				<rect x={20} y={20} width={120} height={120} rx={8} />
+				<rect x={36} y={36} width={40} height={28} rx={3} />
+				<rect x={96} y={36} width={28} height={60} rx={3} />
+				<rect x={36} y={96} width={60} height={24} rx={3} />
+				<path d="M92 110 H122 M122 110 V126 H104" />
+				<circle cx={120} cy={56} r={4} fill={GOLD} />
+			</>
+		);
+	}
+	return (
+		<div
+			style={{
+				position: 'absolute',
+				top: 1100,
+				left: x - 90,
+				width: 180,
+				height: 180,
+				opacity: p,
+				transform: `scale(${0.7 + 0.3 * p})`,
+			}}
+		>
+			<svg viewBox="0 0 160 160" width={180} height={180} fill="none" stroke={GOLD} strokeWidth={5} strokeLinecap="round" strokeLinejoin="round">
+				{art}
+			</svg>
+		</div>
+	);
+};
+
 const SceneG: React.FC = () => (
 	<AbsoluteFill>
 		<Line top={440} delay={0} size={64} color={GOLD} weight={700}>
@@ -391,10 +459,10 @@ const SceneG: React.FC = () => (
 		<Line top={1000} delay={44} size={56} color={GOLD} weight={700}>
 			9468587570
 		</Line>
-		<Line top={1150} delay={56} size={44} color={GOLD} weight={700}>
-			Remotes · LED Parts<br />
-			Backlights · Motherboards
-		</Line>
+		<ProductIcon kind="remote" x={180} delay={56} />
+		<ProductIcon kind="led" x={390} delay={62} />
+		<ProductIcon kind="backlight" x={600} delay={68} />
+		<ProductIcon kind="board" x={810} delay={74} />
 		<Line top={1290} delay={64} size={36}>
 			Spare parts and repairs, with care.
 		</Line>
