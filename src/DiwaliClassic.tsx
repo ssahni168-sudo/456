@@ -148,7 +148,7 @@ const DiyaRow: React.FC<{y: number; xs: number[]; baseDelay?: number; step?: num
 );
 
 // Scene 4: each point arrives with its own diya
-const Point: React.FC<{top: number; delay: number; text: string}> = ({top, delay, text}) => {
+const Point: React.FC<{top: number; delay: number; text: string; color?: string}> = ({top, delay, text, color = BLUE}) => {
 	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
 	const p = spring({frame: frame - delay, fps, config: {damping: 18, stiffness: 120}});
@@ -167,7 +167,7 @@ const Point: React.FC<{top: number; delay: number; text: string}> = ({top, delay
 				fontFamily: useFont().body,
 				fontSize: 54,
 				fontWeight: 700,
-				color: BLUE,
+				color,
 				lineHeight: 1.3,
 			}}
 		>
@@ -188,7 +188,7 @@ const RINGS = [
 	{r: 250, n: 24, color: BLUE},
 ];
 
-const Rangoli: React.FC = () => {
+const Rangoli: React.FC<{main?: string}> = ({main = BLUE}) => {
 	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
 	const centre = spring({frame, fps, config: {damping: 12, stiffness: 160}});
@@ -210,7 +210,7 @@ const Rangoli: React.FC = () => {
 						width: 28,
 						height: 28,
 						borderRadius: '50%',
-						background: ring.color,
+						background: ring.color === BLUE ? main : ring.color,
 						opacity: p,
 						transform: `scale(${p})`,
 					}}
@@ -396,6 +396,19 @@ const SceneG: React.FC = () => (
 );
 
 // ---------- Personal version: no company name, no contact details ----------
+const PLUM = '#7A1F2B';
+const DEEP = '#3B0A14';
+const CREAM = '#FFF6E5';
+
+const PSceneB: React.FC = () => (
+	<AbsoluteFill>
+		<Line top={560} size={78}>
+			This Diwali, I wish you a home full of warmth.
+		</Line>
+		<DiyaRow y={1200} xs={[130, 270, 410, 540, 670, 810, 950]} step={8} />
+	</AbsoluteFill>
+);
+
 const PSceneC: React.FC = () => {
 	const font = useFont();
 	return (
@@ -407,7 +420,7 @@ const PSceneC: React.FC = () => {
 					left: 140,
 					right: 140,
 					height: 440,
-					background: BLUE,
+					background: PLUM,
 					border: `12px solid ${GOLD}`,
 					borderRadius: 40,
 					boxShadow: '0 30px 80px rgba(11, 61, 145, 0.35)',
@@ -425,7 +438,7 @@ const PSceneC: React.FC = () => {
 				<div>May your home</div>
 				<div>always be full of light</div>
 			</div>
-			<Line top={1120} delay={25} size={56} color={BLUE}>
+			<Line top={1120} delay={25} size={56} color={PLUM}>
 				With love and gratitude.
 			</Line>
 			<DiyaRow y={1420} xs={[130, 270, 410, 540, 670, 810, 950]} baseDelay={40} step={6} />
@@ -435,16 +448,16 @@ const PSceneC: React.FC = () => {
 
 const PSceneD: React.FC = () => (
 	<AbsoluteFill>
-		<Point top={560} delay={0} text="Wishing you good health and happiness." />
-		<Point top={880} delay={35} text="May every day bring a little more joy." />
-		<Point top={1200} delay={70} text="Togetherness is the brightest light." />
+		<Point color={PLUM} top={560} delay={0} text="Wishing you good health and happiness." />
+		<Point color={PLUM} top={880} delay={35} text="May every day bring a little more joy." />
+		<Point color={PLUM} top={1200} delay={70} text="Togetherness is the brightest light." />
 	</AbsoluteFill>
 );
 
 const PSceneE: React.FC = () => (
 	<AbsoluteFill>
-		<Rangoli />
-		<Line top={1150} delay={50} size={54} color={BLUE}>
+		<Rangoli main={PLUM} />
+		<Line top={1150} delay={50} size={54} color={PLUM}>
 			Thank you for being there, every single day.
 		</Line>
 	</AbsoluteFill>
@@ -485,14 +498,14 @@ const DiwaliScene: React.FC<{personal?: boolean}> = ({personal = false}) => {
 		interpolate(frame, [210, 240], [1, 0], clamp) + interpolate(frame, [596, 606], [0, 1], clamp);
 
 	return (
-		<AbsoluteFill style={{background: WHITE}}>
-			<AbsoluteFill style={{background: `linear-gradient(180deg, ${NAVY}, ${BLUE})`, opacity: navyOpacity}} />
+		<AbsoluteFill style={{background: personal ? CREAM : WHITE}}>
+			<AbsoluteFill style={{background: `linear-gradient(180deg, ${personal ? DEEP : NAVY}, ${personal ? PLUM : BLUE})`, opacity: navyOpacity}} />
 
 			<Sequence from={0} durationInFrames={90}>
 				<SceneA />
 			</Sequence>
 			<Sequence from={90} durationInFrames={120}>
-				<SceneB />
+				{personal ? <PSceneB /> : <SceneB />}
 			</Sequence>
 			<Sequence from={210} durationInFrames={120}>
 				{personal ? <PSceneC /> : <SceneC />}
