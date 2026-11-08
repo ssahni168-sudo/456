@@ -90,15 +90,18 @@ const Line: React.FC<{
 };
 
 // A clay diya that lights up (glow + flicker). Position is the diya's centre.
-const Diya: React.FC<{x: number; y: number; scale?: number; body?: string; delay?: number}> = ({
+const Diya: React.FC<{x: number; y: number; scale?: number; body?: string; delay?: number; offAt?: number}> = ({
 	x,
 	y,
 	scale = 1,
 	body = SAFFRON,
 	delay = 0,
+	offAt,
 }) => {
 	const frame = useCurrentFrame();
-	const lit = interpolate(frame, [delay, delay + 20], [0, 1], clamp);
+	// Optional: the diya goes out at `offAt` (used for the closing).
+	const off = offAt === undefined ? 1 : interpolate(frame, [offAt, offAt + 15], [1, 0], clamp);
+	const lit = interpolate(frame, [delay, delay + 20], [0, 1], clamp) * off;
 	const flicker = 0.9 + 0.1 * Math.sin(frame * 0.5 + x);
 	const w = 120 * scale;
 	const h = 110 * scale;
@@ -478,17 +481,36 @@ const PSceneF: React.FC = () => (
 	</AbsoluteFill>
 );
 
-const PSceneG: React.FC = () => (
-	<AbsoluteFill>
-		<Line top={600} delay={0} size={70} weight={700}>
-			Stay bright, stay blessed.
-		</Line>
-		<Line top={780} delay={18} size={56} color={GOLD} weight={700}>
-			Love, always.
-		</Line>
-		<DiyaRow y={1200} xs={[240, 390, 540, 690, 840]} baseDelay={30} step={5} />
-	</AbsoluteFill>
-);
+// Closing: words settle, the diyas go out one by one, and one diya stays lit.
+const PSceneG: React.FC = () => {
+	const frame = useCurrentFrame();
+	const zoom = 1 + frame * 0.00012;
+	const fade = interpolate(frame, [468, 498], [0, 1], clamp);
+	const outOrder = [0, 1, 2, 4, 5, 6];
+	return (
+		<AbsoluteFill>
+			<AbsoluteFill style={{transform: `scale(${zoom})`, transformOrigin: '50% 50%'}}>
+				<Line top={560} delay={0} size={70} weight={700}>
+					Stay bright, stay blessed.
+				</Line>
+				<Line top={740} delay={18} size={56} color={GOLD} weight={700}>
+					Love, always.
+				</Line>
+				{[130, 270, 410, 540, 670, 810, 950].map((x, i) => (
+					<Diya
+						key={i}
+						x={x}
+						y={1200}
+						body={[SAFFRON, RED, GOLD][i % 3]}
+						delay={30 + i * 6}
+						offAt={i === 3 ? undefined : 330 + outOrder.indexOf(i) * 45}
+					/>
+				))}
+			</AbsoluteFill>
+			<AbsoluteFill style={{background: '#000000', opacity: fade}} />
+		</AbsoluteFill>
+	);
+};
 
 const DiwaliScene: React.FC<{personal?: boolean}> = ({personal = false}) => {
 	const frame = useCurrentFrame();
